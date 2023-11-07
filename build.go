@@ -52,9 +52,14 @@ func main() {
 		dir = flag.Args()[0]
 	}
 
-	token, err := exec.Command("gh", "auth", "token").CombinedOutput()
-	if err != nil {
-		log.Fatal(err)
+	var token string
+	if os.Getenv("CI") == "true" {
+		token = os.Getenv("GITHUB_TOKEN")
+	} else {
+		token, err = exec.Command("gh", "auth", "token").CombinedOutput()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if err := build(dir, strings.TrimSuffix(string(token), "\n")); err != nil {
