@@ -15,9 +15,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"strings"
 )
 
 var (
@@ -52,17 +50,12 @@ func main() {
 		dir = flag.Args()[0]
 	}
 
-	var token string
-	if os.Getenv("CI") == "true" {
-		token = os.Getenv("GITHUB_TOKEN")
-	} else {
-		token, err = exec.Command("gh", "auth", "token").CombinedOutput()
-		if err != nil {
-			log.Fatal(err)
-		}
+	token := os.Getenv("GITHUB_TOKEN")
+	if token == "" {
+		log.Fatal("set GITHUB_TOKEN environment variable")
 	}
 
-	if err := build(dir, strings.TrimSuffix(string(token), "\n")); err != nil {
+	if err := build(dir, token); err != nil {
 		log.Fatal(err)
 	}
 }
