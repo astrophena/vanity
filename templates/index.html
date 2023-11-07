@@ -1,0 +1,18 @@
+<!-- vim: set ft=gotplhtml: -->
+<!DOCTYPE html>
+<html lang="en" translate="no">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>go.astrophena.name</title>
+  </head>
+  <body>
+    <main>
+      <h1><pre>go.astrophena.name</pre></h1>
+      {{ range . }}
+        <h2><pre><a href="/{{ .Name }}">go.astrophena.name/{{ .Name }}</a></pre></h2>
+        <p>{{ .Description }}</p>
+      {{ end }}
+    </main>
+  </body>
+</html>
