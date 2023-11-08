@@ -22,7 +22,9 @@ jobs:
       - name: 'Build'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: './build.go'
+        run: |
+          ./build.go
+          curl 'https://astrophena.name/icons/sprite.svg' > build/sprite.svg # REMOVE THIS
       - name: 'Setup GitHub Pages'
         uses: 'actions/configure-pages@v3'
       - name: 'Upload built site'
