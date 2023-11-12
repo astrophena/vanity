@@ -34,8 +34,8 @@
 </svg>Blog</a>
           <a href="https://go.astrophena.name">
 <svg class="icon" aria-hidden="true">
-  <use xlink:href="https://go.astrophena.name/sprite.svg#icon-packages"/>
-</svg>Packages</a>
+  <use xlink:href="https://go.astrophena.name/sprite.svg#icon-go-packages"/>
+</svg>Go Packages</a>
           <a href="https://astrophena.name/watched">
 <svg class="icon" aria-hidden="true">
   <use xlink:href="https://go.astrophena.name/sprite.svg#icon-watched"/>
@@ -43,8 +43,9 @@
         </nav>
       </header>
     <main>
-      <h1><code>go.astrophena.name/{{ .Name }}</code></h1>
+      <h1>go.astrophena.name/{{ .Name }}</h1>
       <a href="https://godocs.io/go.astrophena.name/{{ .Name }}"><img src="https://godocs.io/go.astrophena.name/{{ .Name }}?status.svg" alt="Go Documentation"></a>
+      <a href="https://github.com/astrophena/{{ .Name }}"><img alt="Source code link" src="https://img.shields.io/badge/source-link-green"></a>
       <p>{{ .Description }}</p>
     </main>
   </body>
