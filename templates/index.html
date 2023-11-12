@@ -40,7 +40,7 @@
       <h1>Go Packages</h1>
       {{ range . }}
         {{ if not .Archived }}
-          <h2>go.astrophena.name/{{ .Name }}</h2>
+          <h2><a href="/{{ .Name }}">go.astrophena.name/{{ .Name }}</a></h2>
           <a href="https://godocs.io/go.astrophena.name/{{ .Name }}"><img src="https://godocs.io/go.astrophena.name/{{ .Name }}?status.svg" alt="Go Documentation"></a>
           <a href="https://github.com/astrophena/{{ .Name }}"><img alt="Source code link" src="https://img.shields.io/badge/source-link-green"></a>
           <p>{{ .Description }}</p>
@@ -50,7 +50,7 @@
         <summary>No longer maintained</summary>
         {{ range . }}
           {{ if .Archived }}
-            <h2>go.astrophena.name/{{ .Name }}</h2>
+            <h2><a href="/{{ .Name }}">go.astrophena.name/{{ .Name }}</a></h2>
             <a href="https://godocs.io/go.astrophena.name/{{ .Name }}"><img src="https://godocs.io/go.astrophena.name/{{ .Name }}?status.svg" alt="Go Documentation"></a>
             <a href="https://github.com/astrophena/{{ .Name }}"><img alt="Source code link" src="https://img.shields.io/badge/source-link-green"></a>
             <p>{{ .Description }}</p>
