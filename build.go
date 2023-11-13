@@ -150,7 +150,6 @@ type repo struct {
 	URL         string `json:"url"`
 	Private     bool   `json:"private"`
 	Description string `json:"description"`
-	GitURL      string `json:"git_url"`
 	Archived    bool   `json:"archived"`
 }
 
