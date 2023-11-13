@@ -46,6 +46,11 @@
       <h1>go.astrophena.name/{{ .Name }}</h1>
       <a href="https://godocs.io/go.astrophena.name/{{ .Name }}"><img src="https://godocs.io/go.astrophena.name/{{ .Name }}?status.svg" alt="Go Documentation"></a>
       <a href="https://github.com/astrophena/{{ .Name }}"><img alt="Source code link" src="https://img.shields.io/badge/source-link-green"></a>
+      {{ if .Archived }}
+      <div class="alert">
+        This project is unmaintained.
+      </div>
+      {{ end }}
       <p>{{ .Description }}</p>
     </main>
   </body>
