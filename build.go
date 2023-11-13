@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -74,12 +75,12 @@ func build(dir, token string) error {
 	}
 
 	// Obtain needed repositories from GitHub API.
-	allRepos, err := doJSONRequest[[]repo](http.MethodGet, userReposURL, token, http.StatusOK)
+	allRepos, err := doJSONRequest[[]*repo](http.MethodGet, userReposURL, token, http.StatusOK)
 	if err != nil {
 		return err
 	}
 
-	var repos []repo
+	var repos []*repo
 	for _, repo := range allRepos {
 		if repo.Private || repo.Name == "vanity" {
 			continue
@@ -94,6 +95,13 @@ func build(dir, token string) error {
 				repos = append(repos, repo)
 				break
 			}
+		}
+	}
+
+	// Some modifications.
+	for _, repo := range repos {
+		if !strings.HasSuffix(repo.Description, ".") {
+			repo.Description += "."
 		}
 	}
 
