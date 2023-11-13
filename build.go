@@ -19,6 +19,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -26,10 +27,15 @@ import (
 var (
 	//go:embed templates/index.html
 	index     string
-	indexTmpl = template.Must(template.New("index").Parse(index))
+	indexTmpl = template.Must(template.New("index").Funcs(tplFuncs).Parse(index))
 	//go:embed templates/import.html
 	importP    string
-	importTmpl = template.Must(template.New("import").Parse(importP))
+	importTmpl = template.Must(template.New("import").Funcs(tplFuncs).Parse(importP))
+
+	rev      string
+	tplFuncs = template.FuncMap{
+		"rev": func() string { return rev },
+	}
 )
 
 func main() {
@@ -60,14 +66,20 @@ func main() {
 		log.Fatal("set GITHUB_TOKEN environment variable")
 	}
 
-	if err := build(dir, token); err != nil {
+	revb, err := exec.Command("git", "rev-parse", "--short", "HEAD").CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+	rev = strings.TrimSpace(string(revb))
+
+	if err := build(dir, rev, token); err != nil {
 		log.Fatal(err)
 	}
 }
 
 const userReposURL = "https://api.github.com/users/astrophena/repos"
 
-func build(dir, token string) error {
+func build(dir, rev, token string) error {
 	// Clean up after previous build.
 	if _, err := os.Stat(dir); err == nil {
 		if err := os.RemoveAll(dir); err != nil {
