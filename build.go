@@ -187,6 +187,7 @@ type repo struct {
 
 // bits of `go list -json` that we need.
 type pkg struct {
+	Name       string
 	ImportPath string   // import path of package in dir
 	Doc        string   // package documentation string
 	GoFiles    []string // .go source files
