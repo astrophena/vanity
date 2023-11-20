@@ -31,6 +31,9 @@ var (
 	//go:embed templates/import.html
 	importP    string
 	importTmpl = template.Must(template.New("import").Funcs(tplFuncs).Parse(importP))
+	//go:embed templates/pkg.html
+	pkgP    string
+	pkgTmpl = template.Must(template.New("pkg").Funcs(tplFuncs).Parse(pkgP))
 
 	rev      string
 	tplFuncs = template.FuncMap{
@@ -96,6 +99,7 @@ func build(dir, rev, token string) error {
 		return err
 	}
 
+	// Filter only public Go modules.
 	var repos []*repo
 	for _, repo := range allRepos {
 		if repo.Private || repo.Name == "vanity" {
@@ -114,13 +118,6 @@ func build(dir, rev, token string) error {
 		}
 	}
 
-	// Some modifications.
-	for _, repo := range repos {
-		if !strings.HasSuffix(repo.Description, ".") {
-			repo.Description += "."
-		}
-	}
-
 	tmpdir, err := os.MkdirTemp("", "vanity")
 	if err != nil {
 		return err
@@ -128,7 +125,11 @@ func build(dir, rev, token string) error {
 	defer os.RemoveAll(tmpdir)
 
 	for _, repo := range repos {
-		if err := exec.Command("git", "clone", repo.CloneURL, filepath.Join(tmpdir, repo.Name)).Run(); err != nil {
+		if !strings.HasSuffix(repo.Description, ".") {
+			repo.Description += "."
+		}
+
+		if err := exec.Command("git", "clone", "--depth=1", repo.CloneURL, filepath.Join(tmpdir, repo.Name)).Run(); err != nil {
 			return err
 		}
 		var obuf, errbuf bytes.Buffer
@@ -146,9 +147,9 @@ func build(dir, rev, token string) error {
 			if err := dec.Decode(p); err != nil {
 				return err
 			}
+			p.Repo = repo
 			repo.Pkgs = append(repo.Pkgs, p)
 		}
-
 	}
 
 	// Build index page.
@@ -160,7 +161,7 @@ func build(dir, rev, token string) error {
 		return err
 	}
 
-	// Build repo pages.
+	// Build repo and package pages.
 	for _, repo := range repos {
 		buf.Reset()
 
@@ -170,28 +171,50 @@ func build(dir, rev, token string) error {
 		if err := os.WriteFile(filepath.Join(dir, repo.Name+".html"), buf.Bytes(), 0o644); err != nil {
 			return err
 		}
+
+		var pkgbuf bytes.Buffer
+		for _, pkg := range repo.Pkgs {
+			pkgbuf.Reset()
+			if err := pkgTmpl.Execute(&pkgbuf, pkg); err != nil {
+				return err
+			}
+			basePath := strings.TrimPrefix(pkg.ImportPath, "go.astrophena.name/")
+			if basePath == repo.Name {
+				continue
+			}
+			if err := os.MkdirAll(filepath.Dir(filepath.Join(dir, basePath)), 0o755); err != nil {
+				return err
+			}
+			if err := os.WriteFile(filepath.Join(dir, basePath+".html"), pkgbuf.Bytes(), 0o644); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
 }
 
 type repo struct {
+	// From GitHub API:
 	Name        string `json:"name"`
 	URL         string `json:"url"`
 	Private     bool   `json:"private"`
 	Description string `json:"description"`
 	Archived    bool   `json:"archived"`
 	CloneURL    string `json:"clone_url"`
-	Pkgs        []*pkg // Go packages that this repo contains
+	// Go packages that this repo contains
+	Pkgs []*pkg
 }
 
-// bits of `go list -json` that we need.
 type pkg struct {
-	Name       string
+	// bits of 'go list -json' that we need.
+	Name       string   // package name
 	ImportPath string   // import path of package in dir
 	Doc        string   // package documentation string
 	GoFiles    []string // .go source files
 	Imports    []string // import paths used by this package
+
+	Repo *repo
 }
 
 type file struct{ Path string }
