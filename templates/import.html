@@ -52,6 +52,13 @@
       </div>
       {{ end }}
       <p>{{ .Description }}</p>
+      {{ if .Pkgs }}
+      <h2>Packages</h2>
+      {{ range .Pkgs }}
+      <h3><a href="https://godocs.io/{{ .ImportPath }}">{{ .ImportPath }}</a></h3>
+      <p>{{ .Doc }}</p>
+      {{ end }}
+      {{ end }}
     </main>
   </body>
       <footer>

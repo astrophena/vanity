@@ -121,6 +121,36 @@ func build(dir, rev, token string) error {
 		}
 	}
 
+	tmpdir, err := os.MkdirTemp("", "vanity")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmpdir)
+
+	for _, repo := range repos {
+		if err := exec.Command("git", "clone", repo.CloneURL, filepath.Join(tmpdir, repo.Name)).Run(); err != nil {
+			return err
+		}
+		var obuf, errbuf bytes.Buffer
+		list := exec.Command("go", "list", "-json", "./...")
+		list.Dir = filepath.Join(tmpdir, repo.Name)
+		list.Stdout = &obuf
+		list.Stderr = &errbuf
+		if err := list.Run(); err != nil {
+			return fmt.Errorf("go list failed for repo %s: %v (it returned %q)", repo.Name, err, errbuf.String())
+		}
+
+		dec := json.NewDecoder(&obuf)
+		for dec.More() {
+			p := new(pkg)
+			if err := dec.Decode(p); err != nil {
+				return err
+			}
+			repo.Pkgs = append(repo.Pkgs, p)
+		}
+
+	}
+
 	// Build index page.
 	var buf bytes.Buffer
 	if err := indexTmpl.Execute(&buf, repos); err != nil {
@@ -130,7 +160,7 @@ func build(dir, rev, token string) error {
 		return err
 	}
 
-	// Build import pages.
+	// Build repo pages.
 	for _, repo := range repos {
 		buf.Reset()
 
@@ -151,6 +181,16 @@ type repo struct {
 	Private     bool   `json:"private"`
 	Description string `json:"description"`
 	Archived    bool   `json:"archived"`
+	CloneURL    string `json:"clone_url"`
+	Pkgs        []*pkg // Go packages that this repo contains
+}
+
+// bits of `go list -json` that we need.
+type pkg struct {
+	ImportPath string   // import path of package in dir
+	Doc        string   // package documentation string
+	GoFiles    []string // .go source files
+	Imports    []string // import paths used by this package
 }
 
 type file struct{ Path string }
