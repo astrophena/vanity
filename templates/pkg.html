@@ -44,8 +44,10 @@
       </header>
     <main>
       <h1>{{ .ImportPath }}</h1>
-      <a href="{{ .ImportPath }}"><img src="https://godocs.io/{{ .ImportPath }}?status.svg" alt="Go Documentation"></a>
-      <a href="https://github.com/astrophena/{{ .Repo.Name }}"><img alt="Source code link" src="https://img.shields.io/badge/source-link-green"></a>
+      <p class="meta">
+        <a href="https://github.com/astrophena/{{ .Repo.Name }}">GitHub repository</a> |
+        <a href="https://godocs.io/{{ .ImportPath }}">Documentation</a>
+      </p>
       {{ if .Repo.Archived }}
       <div class="alert">
         This project is unmaintained.
@@ -56,16 +58,6 @@
       <pre>$ go install {{ .ImportPath }}@latest</pre>
       {{ else }}
       <pre>$ go get {{ .ImportPath }}</pre>
-      {{ end }}
-      {{ if .Imports }}
-      <details>
-        <summary>Imports</summary>
-        <ul>
-        {{ range .Imports }}
-          <li><a href="https://godocs.io/{{ . }}">{{ . }}</a></li>
-        {{ end }}
-        </ul>
-      </details>
       {{ end }}
     </main>
       <footer>

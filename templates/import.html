@@ -44,8 +44,10 @@
       </header>
     <main>
       <h1>go.astrophena.name/{{ .Name }}</h1>
-      <a href="https://godocs.io/go.astrophena.name/{{ .Name }}"><img src="https://godocs.io/go.astrophena.name/{{ .Name }}?status.svg" alt="Go Documentation"></a>
-      <a href="https://github.com/astrophena/{{ .Name }}"><img alt="Source code link" src="https://img.shields.io/badge/source-link-green"></a>
+      <p class="meta">
+        <a href="https://github.com/astrophena/{{ .Name }}">GitHub repository</a> |
+        <a href="https://godocs.io/go.astrophena.name/{{ .Name }}">Documentation</a>
+      </p>
       {{ if .Archived }}
       <div class="alert">
         This project is unmaintained.
@@ -54,7 +56,7 @@
       <p>{{ .Description }}</p>
       {{ if .Pkgs }}
       <h2>Packages and commands</h2>
-      {{ range .Pkgs }}
+      {{ range pkgs .Pkgs }}
       <h3><a href="https://godocs.io/{{ .ImportPath }}">{{ .ImportPath }}</a></h3>
       <p>{{ .Doc }}</p>
       {{ if eq .Name "main" }}
