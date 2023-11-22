@@ -41,8 +41,10 @@
       {{ range . }}
         {{ if not .Archived }}
           <h2><a href="/{{ .Name }}">go.astrophena.name/{{ .Name }}</a></h2>
-          <a href="https://godocs.io/go.astrophena.name/{{ .Name }}"><img src="https://godocs.io/go.astrophena.name/{{ .Name }}?status.svg" alt="Go Documentation"></a>
-          <a href="https://github.com/astrophena/{{ .Name }}"><img alt="Source code link" src="https://img.shields.io/badge/source-link-green"></a>
+          <p class="meta">
+            <a href="https://github.com/astrophena/{{ .Repo.Name }}">GitHub repository</a> |
+            <a href="https://godocs.io/{{ .ImportPath }}">Documentation</a>
+          </p>
           <p>{{ .Description }}</p>
         {{ end }}
       {{ end }}
@@ -51,8 +53,10 @@
         {{ range . }}
           {{ if .Archived }}
             <h2><a href="/{{ .Name }}">go.astrophena.name/{{ .Name }}</a></h2>
-            <a href="https://godocs.io/go.astrophena.name/{{ .Name }}"><img src="https://godocs.io/go.astrophena.name/{{ .Name }}?status.svg" alt="Go Documentation"></a>
-            <a href="https://github.com/astrophena/{{ .Name }}"><img alt="Source code link" src="https://img.shields.io/badge/source-link-green"></a>
+            <p class="meta">
+              <a href="https://github.com/astrophena/{{ .Repo.Name }}">GitHub repository</a> |
+              <a href="https://godocs.io/{{ .ImportPath }}">Documentation</a>
+            </p>
             <p>{{ .Description }}</p>
           {{ end }}
         {{ end }}
