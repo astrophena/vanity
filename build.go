@@ -179,7 +179,7 @@ func build(dir, rev, token string) error {
 				return err
 			}
 			basePath := strings.TrimPrefix(pkg.ImportPath, "go.astrophena.name/")
-			if basePath == repo.Name {
+			if basePath == repo.Name || strings.Contains(basePath, "internal") {
 				continue
 			}
 			if err := os.MkdirAll(filepath.Dir(filepath.Join(dir, basePath)), 0o755); err != nil {
