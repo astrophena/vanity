@@ -37,7 +37,8 @@ var (
 
 	rev      string
 	tplFuncs = template.FuncMap{
-		"rev": func() string { return rev },
+		"rev":      func() string { return rev },
+		"contains": strings.Contains,
 	}
 )
 

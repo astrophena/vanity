@@ -58,12 +58,14 @@
       {{ if .Pkgs }}
       <h2>Packages and commands</h2>
       {{ range .Pkgs }}
+      {{ if not (contains .ImportPath "internal") }}
       <h3><a href="https://godocs.io/{{ .ImportPath }}">{{ .ImportPath }}</a></h3>
       <p>{{ .Doc }}</p>
       {{ if eq .Name "main" }}
       <pre>$ go install {{ .ImportPath }}@latest</pre>
       {{ else }}
       <pre>$ go get {{ .ImportPath }}</pre>
+      {{ end }}
       {{ end }}
       {{ end }}
       {{ end }}
