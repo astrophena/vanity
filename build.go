@@ -175,18 +175,18 @@ func build(dir, rev, token string) error {
 
 		var pkgbuf bytes.Buffer
 		for _, pkg := range repo.Pkgs {
+			pkg.BasePath = strings.TrimPrefix(pkg.ImportPath, "go.astrophena.name/")
+			if pkg.BasePath == repo.Name || strings.Contains(pkg.BasePath, "internal") {
+				continue
+			}
 			pkgbuf.Reset()
 			if err := pkgTmpl.Execute(&pkgbuf, pkg); err != nil {
 				return err
 			}
-			basePath := strings.TrimPrefix(pkg.ImportPath, "go.astrophena.name/")
-			if basePath == repo.Name || strings.Contains(basePath, "internal") {
-				continue
-			}
-			if err := os.MkdirAll(filepath.Dir(filepath.Join(dir, basePath)), 0o755); err != nil {
+			if err := os.MkdirAll(filepath.Dir(filepath.Join(dir, pkg.BasePath)), 0o755); err != nil {
 				return err
 			}
-			if err := os.WriteFile(filepath.Join(dir, basePath+".html"), pkgbuf.Bytes(), 0o644); err != nil {
+			if err := os.WriteFile(filepath.Join(dir, pkg.BasePath+".html"), pkgbuf.Bytes(), 0o644); err != nil {
 				return err
 			}
 		}
@@ -214,6 +214,8 @@ type pkg struct {
 	Doc        string   // package documentation string
 	GoFiles    []string // .go source files
 	Imports    []string // import paths used by this package
+
+	BasePath string
 
 	Repo *repo
 }
