@@ -176,6 +176,7 @@ func build(dir, rev, token string) error {
 		var pkgbuf bytes.Buffer
 		for _, pkg := range repo.Pkgs {
 			pkg.BasePath = strings.TrimPrefix(pkg.ImportPath, "go.astrophena.name/")
+			pkg.SrcPath = strings.TrimPrefix(pkg.BasePath, repo.Name+"/")
 			if pkg.BasePath == repo.Name || strings.Contains(pkg.BasePath, "internal") {
 				continue
 			}
@@ -216,6 +217,7 @@ type pkg struct {
 	Imports    []string // import paths used by this package
 
 	BasePath string
+	SrcPath  string
 
 	Repo *repo
 }
