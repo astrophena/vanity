@@ -177,6 +177,10 @@ func build(dir, rev, token string) error {
 		for _, pkg := range repo.Pkgs {
 			pkg.BasePath = strings.TrimPrefix(pkg.ImportPath, "go.astrophena.name/")
 			pkg.SrcPath = strings.TrimPrefix(pkg.BasePath, repo.Name+"/")
+			// If we have a single source file, it's better directly link to it.
+			if len(pkg.GoFiles) == 1 {
+				pkg.SrcPath = filepath.Join(pkg.SrcPath, pkg.GoFiles[0])
+			}
 			if pkg.BasePath == repo.Name || strings.Contains(pkg.BasePath, "internal") {
 				continue
 			}
