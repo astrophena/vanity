@@ -35,9 +35,7 @@ var (
 	pkgP    string
 	pkgTmpl = template.Must(template.New("pkg").Funcs(tplFuncs).Parse(pkgP))
 
-	rev      string
 	tplFuncs = template.FuncMap{
-		"rev":      func() string { return rev },
 		"contains": strings.Contains,
 	}
 )
@@ -70,20 +68,14 @@ func main() {
 		log.Fatal("set GITHUB_TOKEN environment variable")
 	}
 
-	revb, err := exec.Command("git", "rev-parse", "--short", "HEAD").CombinedOutput()
-	if err != nil {
-		log.Fatal(err)
-	}
-	rev = strings.TrimSpace(string(revb))
-
-	if err := build(dir, rev, token); err != nil {
+	if err := build(dir, token); err != nil {
 		log.Fatal(err)
 	}
 }
 
 const userReposURL = "https://api.github.com/users/astrophena/repos"
 
-func build(dir, rev, token string) error {
+func build(dir, token string) error {
 	// Clean up after previous build.
 	if _, err := os.Stat(dir); err == nil {
 		if err := os.RemoveAll(dir); err != nil {
