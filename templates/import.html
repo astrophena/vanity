@@ -47,7 +47,7 @@
       <h1>go.astrophena.name/{{ .Name }}</h1>
       <p class="meta">
         <a href="https://github.com/astrophena/{{ .Name }}">Source code</a> |
-        <a href="https://godocs.io/go.astrophena.name/{{ .Name }}">Documentation</a>
+        <a href="https://pkg.go.dev/go.astrophena.name/{{ .Name }}">Documentation</a>
       </p>
       {{ if .Archived }}
       <div class="alert">
@@ -59,7 +59,7 @@
       <h2>Packages and commands</h2>
       {{ range .Pkgs }}
       {{ if not (contains .ImportPath "internal") }}
-      <h3><a href="https://godocs.io/{{ .ImportPath }}">{{ .ImportPath }}</a></h3>
+      <h3><a href="https://pkg.go.dev/{{ .ImportPath }}">{{ .ImportPath }}</a></h3>
       <p>{{ .Doc }}</p>
       {{ if eq .Name "main" }}
       <pre>$ go install {{ .ImportPath }}@latest</pre>

@@ -1,6 +1,6 @@
 # [go.astrophena.name](https://go.astrophena.name)
 
-This is code that generates pages for my [Go vanity import](https://godocs.io/cmd/go#hdr-Remote_import_paths)
+This is code that generates pages for my [Go vanity import](https://pkg.go.dev/cmd/go#hdr-Remote_import_paths)
 domain, hosted on [GitHub Pages](https://pages.github.com).
 
 This code is bloody [omnishambles](https://en.wikipedia.org/wiki/Omnishambles).
