@@ -1,4 +1,11 @@
 <!-- vim: set ft=gotplhtml: -->
+
+{{ define "icon" }}
+<svg class="icon" aria-hidden="true">
+  <use xlink:href="https://go.astrophena.name/sprite.svg#icon-{{ . }}"/>
+</svg>
+{{ end }}
+
 <!DOCTYPE html>
 <html lang="en" translate="no">
   <head>
@@ -45,13 +52,14 @@
         </nav>
       </header>
     <main>
-      <h1>go.astrophena.name/{{ .Name }}</h1>
-      <p class="meta">
-        <a href="https://github.com/astrophena/{{ .Name }}">Source code</a>
-      </p>
+      <h1>
+        <a href="/">go.astrophena.name</a>/{{ .Name }}
+        <span class="module">Module</span>
+      </h1>
+      <p class="meta">{{ template "icon" "github" }}<a href="https://github.com/astrophena/{{ .Name }}">GitHub repository</a></p>
       {{ if .Archived }}
       <div class="alert">
-        This project is unmaintained.
+        This module is unmaintained.
       </div>
       {{ end }}
       <p>{{ .Description }}</p>
@@ -64,7 +72,11 @@
           <h2>Packages and commands</h2>
           {{ range .Pkgs }}
             {{ if not (contains .ImportPath "internal") }}
-              <h3><a href="/{{ .BasePath }}">{{ .ImportPath }}</a></h3>
+              {{ if eq .BasePath .Repo.Name }}
+                <h3>{{ .ImportPath }}</h3>
+              {{ else }}
+                <h3><a href="/{{ .BasePath }}">{{ .ImportPath }}</a></h3>
+              {{ end }}
               <p>{{ .Doc }}</p>
               {{ if eq .Name "main" }}
                 <pre>$ go install {{ .ImportPath }}@latest</pre>

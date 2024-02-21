@@ -44,10 +44,14 @@
 </svg>Watched</a>
         </nav>
       </header>
-    <main>
+    <main {{ if eq .Name "main"}}class="go-command"{{ end }}>
       {{ if .Repo.Archived }}
       <div class="alert">
-        This project is unmaintained.
+        {{ if eq .Name "main" }}
+          This program is unmaintained.
+        {{ else }}
+          This package is unmaintained.
+        {{ end }}
       </div>
       {{ end }}
       {{ .FullDoc }}

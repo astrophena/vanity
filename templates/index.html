@@ -1,4 +1,20 @@
 <!-- vim: set ft=gotplhtml: -->
+
+{{ define "icon" }}
+<svg class="icon" aria-hidden="true">
+  <use xlink:href="https://go.astrophena.name/sprite.svg#icon-{{ . }}"/>
+</svg>
+{{ end }}
+
+{{ define "repo" }}
+<h2>
+  go.astrophena.name/<a href="/{{ .Name }}">{{ .Name }}</a>
+  <span class="module">Module</span>
+</h2>
+<p class="meta">{{ template "icon" "github" }}<a href="https://github.com/astrophena/{{ .Name }}">GitHub repository</a></p>
+<p>{{ .Description }}</p>
+{{ end }}
+
 <!DOCTYPE html>
 <html lang="en" translate="no">
   <head>
@@ -23,18 +39,9 @@
           
         </h1>
         <nav>
-          <a href="https://astrophena.name/blog">
-<svg class="icon" aria-hidden="true">
-  <use xlink:href="https://go.astrophena.name/sprite.svg#icon-blog"/>
-</svg>Blog</a>
-          <a href="https://go.astrophena.name" class="current">
-<svg class="icon" aria-hidden="true">
-  <use xlink:href="https://go.astrophena.name/sprite.svg#icon-go-packages"/>
-</svg>Go Packages</a>
-          <a href="https://astrophena.name/watched">
-<svg class="icon" aria-hidden="true">
-  <use xlink:href="https://go.astrophena.name/sprite.svg#icon-watched"/>
-</svg>Watched</a>
+          <a href="https://astrophena.name/blog">{{ template "icon" "blog" }}Blog</a>
+          <a href="https://go.astrophena.name" class="current">{{ template "icon" "go-packages" }}Go Packages</a>
+          <a href="https://astrophena.name/watched">{{ template "icon" "watched" }}Watched</a>
         </nav>
       </header>
     <main>
@@ -44,24 +51,14 @@
 
       {{ range . }}
         {{ if not .Archived }}
-          <h2><a href="/{{ .Name }}">go.astrophena.name/{{ .Name }}</a></h2>
-          <p class="meta">
-            <a href="https://github.com/astrophena/{{ .Name }}">Source code</a> |
-            <a href="https://pkg.go.dev/go.astrophena.name/{{ .Name }}">Documentation</a>
-          </p>
-          <p>{{ .Description }}</p>
+          {{ template "repo" . }}
         {{ end }}
       {{ end }}
       <details>
         <summary>No longer maintained</summary>
         {{ range . }}
           {{ if .Archived }}
-            <h2><a href="/{{ .Name }}">go.astrophena.name/{{ .Name }}</a></h2>
-            <p class="meta">
-              <a href="https://github.com/astrophena/{{ .Name }}">Source code</a> |
-              <a href="https://pkg.go.dev/go.astrophena.name/{{ .Name }}">Documentation</a>
-            </p>
-            <p>{{ .Description }}</p>
+            {{ template "repo" . }}
           {{ end }}
         {{ end }}
       </details>
