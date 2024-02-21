@@ -169,13 +169,6 @@ func build(dir, token string) error {
 			return err
 		}
 
-		if err := importTmpl.Execute(&buf, repo); err != nil {
-			return err
-		}
-		if err := os.WriteFile(filepath.Join(dir, repo.Name+".html"), buf.Bytes(), 0o644); err != nil {
-			return err
-		}
-
 		var pkgbuf bytes.Buffer
 		for _, pkg := range repo.Pkgs {
 			pkg.BasePath = strings.TrimPrefix(pkg.ImportPath, "go.astrophena.name/")
@@ -197,6 +190,13 @@ func build(dir, token string) error {
 			if err := os.WriteFile(filepath.Join(dir, pkg.BasePath+".html"), pkgbuf.Bytes(), 0o644); err != nil {
 				return err
 			}
+		}
+
+		if err := importTmpl.Execute(&buf, repo); err != nil {
+			return err
+		}
+		if err := os.WriteFile(filepath.Join(dir, repo.Name+".html"), buf.Bytes(), 0o644); err != nil {
+			return err
 		}
 	}
 
