@@ -24,6 +24,7 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
+          go install go.abhg.dev/doc2go@latest
           ./build.go
           # Remove this after we find a way to share resources with site.
           curl 'https://astrophena.name/icons/sprite.svg' > build/sprite.svg

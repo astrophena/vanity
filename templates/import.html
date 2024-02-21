@@ -12,6 +12,7 @@
     <link rel="alternate" type="application/atom+xml" href="https://astrophena.name/feed.xml" />
     <link rel="manifest" href="https://astrophena.name/manifest.json" />
     <link rel="stylesheet" href="https://astrophena.name/style.css" />
+    <link rel="stylesheet" href="/doc2go.css" />
     <meta name="go-import" content="go.astrophena.name/{{ .Name }} git https://github.com/astrophena/{{ .Name }}">
     <meta name="forge:summary" content="https://github.com/astrophena/{{ .Name }}">
     <meta name="forge:dir" content="https://github.com/astrophena/{{ .Name }}/tree/{ref}/{path}">
@@ -46,8 +47,7 @@
     <main>
       <h1>go.astrophena.name/{{ .Name }}</h1>
       <p class="meta">
-        <a href="https://github.com/astrophena/{{ .Name }}">Source code</a> |
-        <a href="https://pkg.go.dev/go.astrophena.name/{{ .Name }}">Documentation</a>
+        <a href="https://github.com/astrophena/{{ .Name }}">Source code</a>
       </p>
       {{ if .Archived }}
       <div class="alert">
@@ -56,18 +56,24 @@
       {{ end }}
       <p>{{ .Description }}</p>
       {{ if .Pkgs }}
-      <h2>Packages and commands</h2>
-      {{ range .Pkgs }}
-      {{ if not (contains .ImportPath "internal") }}
-      <h3><a href="https://pkg.go.dev/{{ .ImportPath }}">{{ .ImportPath }}</a></h3>
-      <p>{{ .Doc }}</p>
-      {{ if eq .Name "main" }}
-      <pre>$ go install {{ .ImportPath }}@latest</pre>
-      {{ else }}
-      <pre>$ go get {{ .ImportPath }}</pre>
-      {{ end }}
-      {{ end }}
-      {{ end }}
+        <!-- If we have a single package rooted at module path, put the full docs on a page.-->
+        {{ if hasOnePkg . }}
+          {{ $pkg := index .Pkgs 0 }}
+          {{ $pkg.FullDoc }}
+        {{ else }}
+          <h2>Packages and commands</h2>
+          {{ range .Pkgs }}
+            {{ if not (contains .ImportPath "internal") }}
+              <h3><a href="/{{ .BasePath }}">{{ .ImportPath }}</a></h3>
+              <p>{{ .Doc }}</p>
+              {{ if eq .Name "main" }}
+                <pre>$ go install {{ .ImportPath }}@latest</pre>
+              {{ else }}
+                <pre>$ go get {{ .ImportPath }}</pre>
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
       {{ end }}
     </main>
       <footer>
