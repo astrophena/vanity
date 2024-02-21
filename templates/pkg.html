@@ -44,7 +44,7 @@
 </svg>Watched</a>
         </nav>
       </header>
-    <main {{ if eq .Name "main"}}class="go-command"{{ end }}>
+    <main>
       {{ if .Repo.Archived }}
       <div class="alert">
         {{ if eq .Name "main" }}
@@ -56,11 +56,16 @@
       {{ end }}
       {{ .FullDoc }}
     </main>
-      <footer>
-      The content for this website is licensed under
-      <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>, the code is
-      <a href="https://opensource.org/licenses/ISC">ISC</a>
-      licensed.
+    <footer>
+      <p>
+        Documentation generated from commit <a href="https://github.com/astrophena/{{ .Repo.Name }}/commit/{{ .Repo.Commit}}">{{ .Repo.Commit }}</a>.
+      </p>
+      <p>
+        The content for this website is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>, the code is
+        <a href="https://opensource.org/licenses/ISC">ISC</a>
+        licensed.
+      </p>
     </footer>
   </body>
 </html>

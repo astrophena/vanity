@@ -56,7 +56,9 @@
         <a href="/">go.astrophena.name</a>/{{ .Name }}
         <span class="module">Module</span>
       </h1>
-      <p class="meta">{{ template "icon" "github" }}<a href="https://github.com/astrophena/{{ .Name }}">GitHub repository</a></p>
+      <p class="meta">
+        {{ template "icon" "github" }}<a href="https://github.com/astrophena/{{ .Name }}">GitHub repository</a>
+      </p>
       {{ if .Archived }}
       <div class="alert">
         This module is unmaintained.
@@ -88,11 +90,16 @@
         {{ end }}
       {{ end }}
     </main>
-      <footer>
-      The content for this website is licensed under
-      <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>, the code is
-      <a href="https://opensource.org/licenses/ISC">ISC</a>
-      licensed.
+    <footer>
+      <p>
+        Documentation generated from commit <a href="https://github.com/astrophena/{{ .Name }}/commit/{{ .Commit }}">{{ .Commit }}</a>.
+      </p>
+      <p>
+        The content for this website is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>, the code is
+        <a href="https://opensource.org/licenses/ISC">ISC</a>
+        licensed.
+      </p>
     </footer>
   </body>
 </html>

@@ -165,6 +165,15 @@ func build(dir, token string) error {
 	for _, repo := range repos {
 		buf.Reset()
 
+		git := exec.Command("git", "rev-parse", "--short", "HEAD")
+		git.Dir = repo.Dir
+		commitb, err := git.Output()
+		if err != nil {
+			return err
+		}
+		commitn := string(commitb)
+		repo.Commit = strings.TrimSuffix(commitn, "\n")
+
 		if err := repo.generateDoc(); err != nil {
 			return err
 		}
@@ -219,6 +228,8 @@ type repo struct {
 	Description string `json:"description"`
 	Archived    bool   `json:"archived"`
 	CloneURL    string `json:"clone_url"`
+	// Obtained by 'git rev-parse --short HEAD'
+	Commit string
 	// For use with doc2go
 	Dir string
 	// Go packages that this repo contains
