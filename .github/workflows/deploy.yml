@@ -31,7 +31,7 @@ jobs:
           curl 'https://astrophena.name/404.html' > build/404.html
           # Dumb hacks, continued…
           # Fix CSP so CSS loads on 404 page.
-          sed -i "s/default-src 'self'/default-src 'self' astrophena.name/g" build/404.html
+          sed -i "s/style-src 'self' 'unsafe-inline'/style-src 'self' 'unsafe-inline' astrophena.name/g" build/404.html
       - name: 'Setup GitHub Pages'
         uses: 'actions/configure-pages@v4'
       - name: 'Upload built site'
