@@ -100,7 +100,7 @@ func build(dir, token string) error {
 	// Filter only public Go modules.
 	var repos []*repo
 	for _, repo := range allRepos {
-		if repo.Private || repo.Name == "vanity" {
+		if repo.Private || repo.Fork || repo.Name == "vanity" {
 			continue
 		}
 
@@ -228,6 +228,7 @@ type repo struct {
 	Description string `json:"description"`
 	Archived    bool   `json:"archived"`
 	CloneURL    string `json:"clone_url"`
+	Fork        bool   `json:"fork"`
 	// Obtained by 'git rev-parse --short HEAD'
 	Commit string
 	// For use with doc2go
