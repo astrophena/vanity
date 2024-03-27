@@ -203,7 +203,7 @@ func build(dir, token string) error {
 		}
 	}
 
-	hcss, err := exec.Command("doc2go", "-highlight", highlightTheme, "-highlight-print-css").Output()
+	hcss, err := exec.Command("go", "run", "go.abhg.dev/doc2go@latest", "-highlight", highlightTheme, "-highlight-print-css").Output()
 	if err != nil {
 		return err
 	}
