@@ -1,0 +1,32 @@
+<!-- vim: set ft=gotplhtml: -->
+{{ define "pkg" }}
+<!DOCTYPE html>
+<html lang="en" translate="no">
+  <head>
+    {{ template "head" }}
+    <meta name="go-import" content="{{ .ImportPath }} git https://github.com/astrophena/{{ .Repo.Name }}">
+    <meta name="forge:summary" content="https://github.com/astrophena/{{ .Repo.Name }}">
+    <meta name="forge:dir" content="https://github.com/astrophena/{{ .Repo.Name }}/tree/{ref}/{path}">
+    <meta name="forge:file" content="https://github.com/astrophena/{{ .Repo.Name }}/tree/{ref}/{path}">
+    <meta name="forge:rawfile" content="https://github.com/astrophena/{{ .Repo.Name }}/blob/{ref}/{path}">
+    <meta name="forge:line" content="https://github.com/astrophena/{{ .Repo.Name }}/tree/{ref}/{path}#L{line}">
+    <title>{{ .ImportPath }}</title>
+  </head>
+  <body>
+    {{ template "header" }}
+    <main>
+      {{ if .Repo.Archived }}
+        <div class="alert">
+          {{ if eq .Name "main" }}
+            This program is unmaintained.
+          {{ else }}
+            This package is unmaintained.
+          {{ end }}
+        </div>
+      {{ end }}
+      {{ .FullDoc }}
+    </main>
+    {{ template "footer" .Repo }}  
+  </body>
+</html>
+{{ end }}

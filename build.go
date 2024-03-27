@@ -10,6 +10,7 @@ package main
 
 import (
 	"bytes"
+	"embed"
 	_ "embed"
 	"encoding/json"
 	"errors"
@@ -29,20 +30,13 @@ import (
 const highlightTheme = "native"
 
 var (
-	//go:embed templates/index.html
-	index     string
-	indexTmpl = template.Must(template.New("index").Funcs(tplFuncs).Parse(index))
-	//go:embed templates/import.html
-	importP    string
-	importTmpl = template.Must(template.New("import").Funcs(tplFuncs).Parse(importP))
-	//go:embed templates/pkg.html
-	pkgP    string
-	pkgTmpl = template.Must(template.New("pkg").Funcs(tplFuncs).Parse(pkgP))
-
+	//go:embed *.html
+	tplFS    embed.FS
 	tplFuncs = template.FuncMap{
 		"contains":  strings.Contains,
 		"hasOnePkg": hasOnePkg,
 	}
+	tpl = template.Must(template.New("vanity").Funcs(tplFuncs).ParseFS(tplFS, "*.html"))
 )
 
 func main() {
@@ -154,7 +148,7 @@ func build(dir, token string) error {
 
 	// Build index page.
 	var buf bytes.Buffer
-	if err := indexTmpl.Execute(&buf, repos); err != nil {
+	if err := tpl.ExecuteTemplate(&buf, "index", repos); err != nil {
 		return err
 	}
 	if err := os.WriteFile(filepath.Join(dir, "index.html"), buf.Bytes(), 0o644); err != nil {
@@ -190,7 +184,7 @@ func build(dir, token string) error {
 				continue
 			}
 			pkgbuf.Reset()
-			if err := pkgTmpl.Execute(&pkgbuf, pkg); err != nil {
+			if err := tpl.ExecuteTemplate(&pkgbuf, "pkg", pkg); err != nil {
 				return err
 			}
 			if err := os.MkdirAll(filepath.Dir(filepath.Join(dir, pkg.BasePath)), 0o755); err != nil {
@@ -201,7 +195,7 @@ func build(dir, token string) error {
 			}
 		}
 
-		if err := importTmpl.Execute(&buf, repo); err != nil {
+		if err := tpl.ExecuteTemplate(&buf, "import", repo); err != nil {
 			return err
 		}
 		if err := os.WriteFile(filepath.Join(dir, repo.Name+".html"), buf.Bytes(), 0o644); err != nil {
@@ -209,11 +203,11 @@ func build(dir, token string) error {
 		}
 	}
 
-	highlightCSS, err := exec.Command("doc2go", "-highlight", highlightTheme, "-highlight-print-css").Output()
+	hcss, err := exec.Command("doc2go", "-highlight", highlightTheme, "-highlight-print-css").Output()
 	if err != nil {
 		return err
 	}
-	if err := os.WriteFile(filepath.Join(dir, "doc2go.css"), highlightCSS, 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "doc2go.css"), hcss, 0o644); err != nil {
 		return err
 	}
 
