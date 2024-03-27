@@ -24,13 +24,10 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          go install go.abhg.dev/doc2go@a6c11b6ac379eb4a93fc99e6dd3682ba4a3ce073
           ./build.go
           # Remove this after we find a way to share resources with site.
           curl 'https://astrophena.name/icons/sprite.svg' > build/sprite.svg
           curl 'https://astrophena.name/404.html' > build/404.html
-          # Dumb hacks, continued…
-          # Fix CSP so CSS loads on 404 page.
           sed -i "s/style-src 'self' 'unsafe-inline'/style-src 'self' 'unsafe-inline' astrophena.name/g" build/404.html
       - name: 'Setup GitHub Pages'
         uses: 'actions/configure-pages@v4'

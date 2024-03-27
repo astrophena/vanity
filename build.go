@@ -289,7 +289,13 @@ func (r *repo) generateDoc() error {
 	}
 	defer os.RemoveAll(tmpdir)
 
-	doc2go := exec.Command("doc2go", "-highlight", "classes:"+highlightTheme, "-embed", "-out", tmpdir, "./...")
+	doc2go := exec.Command(
+		"go", "run", "go.abhg.dev/doc2go@latest",
+		"-highlight",
+		"classes:"+highlightTheme,
+		"-embed", "-out", tmpdir,
+		"./...",
+	)
 	doc2go.Dir = r.Dir
 	if err := doc2go.Run(); err != nil {
 		return err
