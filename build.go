@@ -27,7 +27,12 @@ import (
 	"strings"
 )
 
-const highlightTheme = "native"
+// doc2go options.
+const (
+	// Git revision of doc2go (https://github.com/abhinav/doc2go) that we use.
+	doc2goRev      = "bdff4b4420926f99e04e7e181f64e5f53107495c"
+	highlightTheme = "native"
+)
 
 var (
 	//go:embed *.html
@@ -203,7 +208,12 @@ func build(dir, token string) error {
 		}
 	}
 
-	hcss, err := exec.Command("go", "run", "go.abhg.dev/doc2go@latest", "-highlight", highlightTheme, "-highlight-print-css").Output()
+	hcss, err := exec.Command(
+		"go", "run",
+		"go.abhg.dev/doc2go@"+doc2goRev,
+		"-highlight", highlightTheme,
+		"-highlight-print-css",
+	).Output()
 	if err != nil {
 		return err
 	}
@@ -290,7 +300,7 @@ func (r *repo) generateDoc() error {
 	defer os.RemoveAll(tmpdir)
 
 	doc2go := exec.Command(
-		"go", "run", "go.abhg.dev/doc2go@latest",
+		"go", "run", "go.abhg.dev/doc2go@"+doc2goRev,
 		"-highlight",
 		"classes:"+highlightTheme,
 		"-embed", "-out", tmpdir,
