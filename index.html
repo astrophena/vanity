@@ -22,7 +22,9 @@
         <summary>No longer maintained</summary>
         {{ range . }}
           {{ if .Archived }}
-            {{ template "repo" . }}
+            {{ if not .Private }}
+              {{ template "repo" . }}
+            {{ end }}
           {{ end }}
         {{ end }}
       </details>
