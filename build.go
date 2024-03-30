@@ -96,10 +96,10 @@ func build(dir, token string) error {
 		return err
 	}
 
-	// Filter only public Go modules.
+	// Filter only Go modules.
 	var repos []*repo
 	for _, repo := range allRepos {
-		if repo.Private || repo.Fork || repo.Name == "vanity" {
+		if repo.Fork || repo.Name == "vanity" {
 			continue
 		}
 
@@ -122,6 +122,11 @@ func build(dir, token string) error {
 	defer os.RemoveAll(tmpdir)
 
 	for _, repo := range repos {
+		// We don't list packages for private repos.
+		if repo.Private {
+			continue
+		}
+
 		if !strings.HasSuffix(repo.Description, ".") {
 			repo.Description += "."
 		}
@@ -164,17 +169,19 @@ func build(dir, token string) error {
 	for _, repo := range repos {
 		buf.Reset()
 
-		git := exec.Command("git", "rev-parse", "--short", "HEAD")
-		git.Dir = repo.Dir
-		commitb, err := git.Output()
-		if err != nil {
-			return err
-		}
-		commitn := string(commitb)
-		repo.Commit = strings.TrimSuffix(commitn, "\n")
+		if repo.Dir != "" {
+			git := exec.Command("git", "rev-parse", "--short", "HEAD")
+			git.Dir = repo.Dir
+			commitb, err := git.Output()
+			if err != nil {
+				return err
+			}
+			commitn := string(commitb)
+			repo.Commit = strings.TrimSuffix(commitn, "\n")
 
-		if err := repo.generateDoc(); err != nil {
-			return err
+			if err := repo.generateDoc(); err != nil {
+				return err
+			}
 		}
 
 		var pkgbuf bytes.Buffer

@@ -15,42 +15,46 @@
   <body>
     {{ template "header" }}
     <main>
-      <h1>
-        <a href="/">go.astrophena.name</a>/{{ .Name }}
-        <span class="module">Module</span>
-      </h1>
-      <p class="meta">
-        {{ template "icon" "github" }}<a href="https://github.com/astrophena/{{ .Name }}">GitHub repository</a>
-      </p>
-      {{ if .Archived }}
-      <div class="alert">
-        This module is unmaintained.
-      </div>
-      {{ end }}
-      <p>{{ .Description }}</p>
-      {{ if .Pkgs }}
-        <!-- If we have a single package rooted at module path, put the full docs on a page.-->
-        {{ if hasOnePkg . }}
-          {{ $pkg := index .Pkgs 0 }}
-          {{ $pkg.FullDoc }}
-        {{ else }}
-          <h2>Packages and commands</h2>
-          {{ range .Pkgs }}
-            {{ if not (contains .ImportPath "internal") }}
-              {{ if eq .BasePath .Repo.Name }}
-                <h3>{{ .ImportPath }}</h3>
-              {{ else }}
-                <h3><a href="/{{ .BasePath }}">{{ .ImportPath }}</a></h3>
-              {{ end }}
-              <p>{{ .Doc }}</p>
-              {{ if eq .Name "main" }}
-                <pre>$ go install {{ .ImportPath }}@latest</pre>
-              {{ else }}
-                <pre>$ go get {{ .ImportPath }}</pre>
+      {{ if not .Private }}
+        <h1>
+          <a href="/">go.astrophena.name</a>/{{ .Name }}
+          <span class="module">Module</span>
+        </h1>
+        <p class="meta">
+          {{ template "icon" "github" }}<a href="https://github.com/astrophena/{{ .Name }}">GitHub repository</a>
+        </p>
+        {{ if .Archived }}
+          <div class="alert">
+            This module is unmaintained.
+          </div>
+        {{ end }}
+        <p>{{ .Description }}</p>
+        {{ if .Pkgs }}
+          <!-- If we have a single package rooted at module path, put the full docs on a page.-->
+          {{ if hasOnePkg . }}
+            {{ $pkg := index .Pkgs 0 }}
+            {{ $pkg.FullDoc }}
+          {{ else }}
+            <h2>Packages and commands</h2>
+            {{ range .Pkgs }}
+              {{ if not (contains .ImportPath "internal") }}
+                {{ if eq .BasePath .Repo.Name }}
+                  <h3>{{ .ImportPath }}</h3>
+                {{ else }}
+                  <h3><a href="/{{ .BasePath }}">{{ .ImportPath }}</a></h3>
+                {{ end }}
+                <p>{{ .Doc }}</p>
+                {{ if eq .Name "main" }}
+                  <pre>$ go install {{ .ImportPath }}@latest</pre>
+                {{ else }}
+                  <pre>$ go get {{ .ImportPath }}</pre>
+                {{ end }}
               {{ end }}
             {{ end }}
           {{ end }}
         {{ end }}
+      {{ else }}
+        <p>There is nothing to see here, move along.</p>
       {{ end }}
     </main>
     {{ template "footer" . }}
