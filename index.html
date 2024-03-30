@@ -12,7 +12,7 @@
       <h1>Go Packages</h1>
       <p><a href="https://go.dev">Go</a> packages and tools that I wrote.</p>
       {{ range . }}
-        {{ if and (not .Archived .Private) }}
+        {{ if not (and .Archived .Private) }}
           {{ template "repo" . }}
         {{ end }}
       {{ end }}
