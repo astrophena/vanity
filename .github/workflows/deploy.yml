@@ -22,7 +22,7 @@ jobs:
           go-version-file: 'go.mod'
       - name: 'Build'
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
         run: |
           ./build.go
           # Remove this after we find a way to share resources with site.
