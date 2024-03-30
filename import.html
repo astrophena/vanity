@@ -13,9 +13,9 @@
     <title>go.astrophena.name/{{ .Name }}</title>
   </head>
   <body>
-    {{ template "header" }}
-    <main>
-      {{ if not .Private }}
+    {{ if not .Private }}
+      {{ template "header" }}
+      <main>
         <h1>
           <a href="/">go.astrophena.name</a>/{{ .Name }}
           <span class="module">Module</span>
@@ -53,11 +53,14 @@
             {{ end }}
           {{ end }}
         {{ end }}
-      {{ else }}
+      </main>
+      {{ template "footer" . }}
+    {{ else }}
+      <main>
         <p>There is nothing to see here, move along.</p>
-      {{ end }}
-    </main>
-    {{ template "footer" . }}
+        <p>Go to the <a href="https://astrophena.name">home page</a>.</p>
+      </main>
+    {{ end }}
   </body>
 </html>
 {{ end }}
