@@ -77,7 +77,7 @@ func main() {
 	}
 }
 
-const userReposURL = "https://api.github.com/users/astrophena/repos"
+const userReposURL = "https://api.github.com/user/repos"
 
 func build(dir, token string) error {
 	// Clean up after previous build.
