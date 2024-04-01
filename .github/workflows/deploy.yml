@@ -30,7 +30,7 @@ jobs:
           curl 'https://astrophena.name/404.html' > build/404.html
           sed -i "s/style-src 'self' 'unsafe-inline'/style-src 'self' 'unsafe-inline' astrophena.name/g" build/404.html
       - name: 'Setup GitHub Pages'
-        uses: 'actions/configure-pages@v4'
+        uses: 'actions/configure-pages@v5'
       - name: 'Upload built site'
         uses: 'actions/upload-pages-artifact@v3'
         with:
