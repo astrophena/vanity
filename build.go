@@ -25,6 +25,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // doc2go options.
@@ -262,6 +263,10 @@ type pkg struct {
 
 type file struct{ Path string }
 
+var httpc = &http.Client{
+	Timeout: 10 * time.Second,
+}
+
 func doJSONRequest[R any](method, url, token string, wantStatus int) (R, error) {
 	var resp R
 
@@ -272,8 +277,7 @@ func doJSONRequest[R any](method, url, token string, wantStatus int) (R, error) 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 
-	client := &http.Client{}
-	res, err := client.Do(req)
+	res, err := httpc.Do(req)
 	if err != nil {
 		return resp, err
 	}
@@ -309,6 +313,8 @@ func (r *repo) generateDoc() error {
 		"-embed", "-out", tmpdir,
 		"./...",
 	)
+	doc2go.Stdout = os.Stdout
+	doc2go.Stderr = os.Stderr
 	doc2go.Dir = r.Dir
 	if err := doc2go.Run(); err != nil {
 		return err
