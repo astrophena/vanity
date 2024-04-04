@@ -118,6 +118,15 @@ func build(dir, token string) error {
 	}
 	defer os.RemoveAll(tmpdir)
 
+	// Compile the doc2go binary.
+	doc2go := filepath.Join(tmpdir, "doc2go")
+	install := exec.Command("go", "build", "-o", filepath.Join(tmpdir, "doc2go"), "go.abhg.dev/doc2go")
+	install.Stdout = os.Stdout
+	install.Stderr = os.Stderr
+	if err := install.Run(); err != nil {
+		return err
+	}
+
 	for _, repo := range repos {
 		// We don't list packages for private repos.
 		if repo.Private {
@@ -176,7 +185,7 @@ func build(dir, token string) error {
 			commitn := string(commitb)
 			repo.Commit = strings.TrimSuffix(commitn, "\n")
 
-			if err := repo.generateDoc(); err != nil {
+			if err := repo.generateDoc(doc2go); err != nil {
 				return err
 			}
 		}
@@ -213,8 +222,7 @@ func build(dir, token string) error {
 	}
 
 	hcss, err := exec.Command(
-		"go", "run",
-		"go.abhg.dev/doc2go",
+		doc2go,
 		"-highlight", highlightTheme,
 		"-highlight-print-css",
 	).Output()
@@ -299,7 +307,7 @@ func doJSONRequest[R any](method, url, token string, wantStatus int) (R, error) 
 	return resp, nil
 }
 
-func (r *repo) generateDoc() error {
+func (r *repo) generateDoc(doc2goBin string) error {
 	tmpdir, err := os.MkdirTemp("", "vanity-doc2go")
 	if err != nil {
 		return err
@@ -307,7 +315,7 @@ func (r *repo) generateDoc() error {
 	defer os.RemoveAll(tmpdir)
 
 	doc2go := exec.Command(
-		"go", "run", "go.abhg.dev/doc2go",
+		doc2goBin,
 		"-highlight",
 		"classes:"+highlightTheme,
 		"-embed", "-out", tmpdir,
