@@ -120,7 +120,7 @@ func build(dir, token string) error {
 
 	// Compile the doc2go binary.
 	doc2go := filepath.Join(tmpdir, "doc2go")
-	install := exec.Command("go", "build", "-o", filepath.Join(tmpdir, "doc2go"), "go.abhg.dev/doc2go")
+	install := exec.Command("go", "build", "-o", doc2go, "go.abhg.dev/doc2go")
 	install.Stdout = os.Stdout
 	install.Stderr = os.Stderr
 	if err := install.Run(); err != nil {
