@@ -46,8 +46,11 @@ var (
 func main() {
 	log.SetFlags(0)
 
+	cacheDir := flag.String("cache-dir", "", "Path to the `directory` used for caching.")
+
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: ./build.go [flags] [dir]\n")
+		flag.PrintDefaults()
 	}
 	flag.Parse()
 
@@ -71,14 +74,21 @@ func main() {
 		log.Fatal("set GITHUB_TOKEN environment variable")
 	}
 
-	if err := build(dir, token); err != nil {
+	if err := build(dir, *cacheDir, token); err != nil {
 		log.Fatal(err)
 	}
 }
 
 const userReposURL = "https://api.github.com/user/repos"
 
-func build(dir, token string) error {
+func exists(path string) bool {
+	if _, err := os.Stat(path); errors.Is(err, fs.ErrNotExist) {
+		return false
+	}
+	return true
+}
+
+func build(dir, cacheDir, token string) error {
 	// Clean up after previous build.
 	if _, err := os.Stat(dir); err == nil {
 		if err := os.RemoveAll(dir); err != nil {
@@ -89,14 +99,26 @@ func build(dir, token string) error {
 		return err
 	}
 
+	cachedPushedAt := make(map[string]time.Time)
+	if cacheDir != "" && exists(filepath.Join(cacheDir, "pushed_at.json")) {
+		b, err := os.ReadFile(filepath.Join(cacheDir, "pushed_at.json"))
+		if err != nil {
+			return err
+		}
+		if err := json.Unmarshal(b, &cachedPushedAt); err != nil {
+			return err
+		}
+	}
+
 	// Obtain needed repositories from GitHub API.
 	allRepos, err := doJSONRequest[[]*repo](http.MethodGet, userReposURL, token, http.StatusOK)
 	if err != nil {
 		return err
 	}
 
-	// Filter only Go modules.
+	// Filter only Go modules and build new pushed at map.
 	var repos []*repo
+	pushedAt := make(map[string]time.Time)
 	for _, repo := range allRepos {
 		if repo.Fork || repo.Name == "vanity" {
 			continue
@@ -109,8 +131,35 @@ func build(dir, token string) error {
 		for _, f := range files {
 			if f.Path == "go.mod" {
 				repos = append(repos, repo)
+				pushedAt[repo.Name] = repo.PushedAt
 				break
 			}
+		}
+	}
+
+	// Check if any of the repositories needs to be rebuilt. If not, exit the
+	// build, writing new pushed at map to cache.
+	var needRebuild bool
+	for repo, newPushedAt := range pushedAt {
+		if newPushedAt.After(cachedPushedAt[repo]) {
+			needRebuild = true
+			break
+		}
+	}
+	if !needRebuild {
+		log.Printf("All repositories up to date. No need for rebuild.")
+		return nil
+	}
+	if cacheDir != "" {
+		if err := os.MkdirAll(cacheDir, 0o755); err != nil {
+			return err
+		}
+		b, err := json.Marshal(pushedAt)
+		if err != nil {
+			return err
+		}
+		if err := os.WriteFile(filepath.Join(cacheDir, "pushed_at.json"), b, 0o644); err != nil {
+			return err
 		}
 	}
 
@@ -263,13 +312,14 @@ func build(dir, token string) error {
 
 type repo struct {
 	// From GitHub API:
-	Name        string `json:"name"`
-	URL         string `json:"url"`
-	Private     bool   `json:"private"`
-	Description string `json:"description"`
-	Archived    bool   `json:"archived"`
-	CloneURL    string `json:"clone_url"`
-	Fork        bool   `json:"fork"`
+	Name        string    `json:"name"`
+	URL         string    `json:"url"`
+	Private     bool      `json:"private"`
+	Description string    `json:"description"`
+	Archived    bool      `json:"archived"`
+	CloneURL    string    `json:"clone_url"`
+	Fork        bool      `json:"fork"`
+	PushedAt    time.Time `json:"pushed_at"`
 	// Obtained by 'git rev-parse --short HEAD'
 	Commit string
 	// For use with doc2go
