@@ -39,6 +39,8 @@ var (
 		"hasOnePkg": hasOnePkg,
 	}
 	tpl = template.Must(template.New("vanity").Funcs(tplFuncs).ParseFS(tplFS, "*.html"))
+	//go:embed sprite.svg
+	iconsSprite []byte
 )
 
 func main() {
@@ -137,11 +139,19 @@ func build(dir, token string) error {
 			repo.Description += "."
 		}
 
-		if err := exec.Command("git", "clone", "--depth=1", repo.CloneURL, filepath.Join(tmpdir, repo.Name)).Run(); err != nil {
+		log.Printf("Cloning repository %s.", repo.Name)
+		clone := exec.Command("git", "clone", "--depth=1", repo.CloneURL, filepath.Join(tmpdir, repo.Name))
+		// Some fuckery because Git broke Git LFS support.
+		// See https://github.com/git-lfs/git-lfs/issues/5749.
+		clone.Env = append(os.Environ(), "GIT_CLONE_PROTECTION_ACTIVE=false")
+		clone.Stdout = os.Stdout
+		clone.Stderr = os.Stderr
+		if err := clone.Run(); err != nil {
 			return err
 		}
 		repo.Dir = filepath.Join(tmpdir, repo.Name)
 
+		log.Printf("Running \"go list\" for %s.", repo.Name)
 		var obuf, errbuf bytes.Buffer
 		list := exec.Command("go", "list", "-json", "./...")
 		list.Dir = repo.Dir
@@ -176,6 +186,7 @@ func build(dir, token string) error {
 		buf.Reset()
 
 		if repo.Dir != "" {
+			log.Printf("Generating docs for %s.", repo.Name)
 			git := exec.Command("git", "rev-parse", "--short", "HEAD")
 			git.Dir = repo.Dir
 			commitb, err := git.Output()
@@ -219,6 +230,20 @@ func build(dir, token string) error {
 		if err := os.WriteFile(filepath.Join(dir, repo.Name+".html"), buf.Bytes(), 0o644); err != nil {
 			return err
 		}
+	}
+
+	// Build 404 page.
+	var notFoundBuf bytes.Buffer
+	if err := tpl.ExecuteTemplate(&notFoundBuf, "404", nil); err != nil {
+		return err
+	}
+	if err := os.WriteFile(filepath.Join(dir, "404.html"), notFoundBuf.Bytes(), 0o644); err != nil {
+		return err
+	}
+
+	// Copy sprites.
+	if err := os.WriteFile(filepath.Join(dir, "sprite.svg"), iconsSprite, 0o644); err != nil {
+		return err
 	}
 
 	hcss, err := exec.Command(

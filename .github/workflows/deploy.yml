@@ -26,12 +26,7 @@ jobs:
       - name: 'Build'
         env:
           GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
-        run: |
-          ./build.go
-          # Remove this after we find a way to share resources with site.
-          curl 'https://astrophena.name/icons/sprite.svg' > build/sprite.svg
-          curl 'https://astrophena.name/404.html' > build/404.html
-          sed -i "s/style-src 'self' 'unsafe-inline'/style-src 'self' 'unsafe-inline' astrophena.name/g" build/404.html
+        run: './build.go'
       - name: 'Setup GitHub Pages'
         uses: 'actions/configure-pages@v5'
       - name: 'Upload built site'
