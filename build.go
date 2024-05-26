@@ -89,16 +89,6 @@ func exists(path string) bool {
 }
 
 func build(dir, cacheDir, token string) error {
-	// Clean up after previous build.
-	if _, err := os.Stat(dir); err == nil {
-		if err := os.RemoveAll(dir); err != nil {
-			return err
-		}
-	}
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return err
-	}
-
 	cachedPushedAt := make(map[string]time.Time)
 	if cacheDir != "" && exists(filepath.Join(cacheDir, "pushed_at.json")) {
 		b, err := os.ReadFile(filepath.Join(cacheDir, "pushed_at.json"))
@@ -163,6 +153,15 @@ func build(dir, cacheDir, token string) error {
 		}
 	}
 
+	// Clean up after previous build.
+	if _, err := os.Stat(dir); err == nil {
+		if err := os.RemoveAll(dir); err != nil {
+			return err
+		}
+	}
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return err
+	}
 	tmpdir, err := os.MkdirTemp("", "vanity")
 	if err != nil {
 		return err

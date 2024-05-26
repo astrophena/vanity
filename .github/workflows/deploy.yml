@@ -33,11 +33,14 @@ jobs:
           GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
         run: './build.go -cache-dir cache'
       - name: 'Setup GitHub Pages'
+        if: "${{ hashFiles('build/') != '' }}"
         uses: 'actions/configure-pages@v5'
       - name: 'Upload built site'
+        if: "${{ hashFiles('build/') != '' }}"
         uses: 'actions/upload-pages-artifact@v3'
         with:
           path: 'build'
       - name: 'Deploy to GitHub Pages'
+        if: "${{ hashFiles('build/') != '' }}"
         id: 'deployment'
         uses: 'actions/deploy-pages@v4'
