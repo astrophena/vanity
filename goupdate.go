@@ -1,3 +1,9 @@
+//usr/bin/env go run $0 $@; exit $?
+
+// © 2024 Ilya Mateyko. All rights reserved.
+// Use of this source code is governed by the ISC
+// license that can be found in the LICENSE file.
+
 //go:build ignore
 
 // goupdate checks the Go version specified in the go.mod file of a Go project,

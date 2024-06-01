@@ -18,4 +18,4 @@ jobs:
       - name: 'Run gofeed'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: 'go run goupdate.go'
+        run: './goupdate.go'
