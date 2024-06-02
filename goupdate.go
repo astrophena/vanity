@@ -70,6 +70,7 @@ func main() {
 	run("git", "commit", "-m", "go.mod: update to "+curGoVersion)
 	run("git", "push", "origin", branch)
 	run("gh", "pr", "create", "-f")
+	run("gh", "pr", "merge", "--auto")
 }
 
 // getCurGoVersion fetches the latest Go version from the Go downloads page and returns it.

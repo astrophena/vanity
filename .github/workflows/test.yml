@@ -1,0 +1,16 @@
+name: 'Test'
+on:
+  pull_request:
+jobs:
+  test:
+    name: 'Test'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Check out'
+        uses: 'actions/checkout@v4'
+      - name: 'Set up Go'
+        uses: 'actions/setup-go@v5'
+        with:
+          go-version-file: 'go.mod'
+      - name: 'Check if build.go compiles'
+        run: './build.go -h'
