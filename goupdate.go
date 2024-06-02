@@ -69,8 +69,8 @@ func main() {
 	run("git", "add", "go.mod")
 	run("git", "commit", "-m", "go.mod: update to "+curGoVersion)
 	run("git", "push", "origin", branch)
-	run("gh", "pr", "create", "-f")
-	run("gh", "pr", "merge", "--auto")
+	run("gh", "pr", "create", "--fill")
+	run("gh", "pr", "merge", "--auto", "--delete-branch", "--squash")
 }
 
 // getCurGoVersion fetches the latest Go version from the Go downloads page and returns it.
