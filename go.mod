@@ -1,8 +1,6 @@
 module go.astrophena.name/vanity
 
-go 1.22.0
-
-toolchain go1.22.3
+go 1.22
 
 require go.abhg.dev/doc2go v0.8.2-0.20240523034439-f29811956426
 
