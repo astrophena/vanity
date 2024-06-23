@@ -57,9 +57,16 @@
       {{ template "footer" . }}
     {{ else }}
       <main>
-        <h1>Nothing here.</h1>
-        <p>There is nothing to see here, move along.</p>
-        <p>Go to the <a href="https://astrophena.name">home page</a>.</p>
+        <h1>Whoa there!</h1>
+        <p>This module is private.</p>
+        <p>
+          To fetch it, ensure that your <code>GOPRIVATE</code> environment variable includes
+          <code>{{ .ImportPath }}</code> and you have access to it.
+        </p>
+        <p>
+          See <a href="https://go.dev/ref/mod#private-module-privacy">Go documentation</a> for reference.
+        </p>
+        <p>If you are get here by mistake, go to the <a href="https://astrophena.name">home page</a>.</p>
       </main>
     {{ end }}
   </body>
