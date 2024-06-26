@@ -12,8 +12,10 @@ require (
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/fluhus/godoc-tricks v1.5.0 // indirect
 	github.com/peterbourgon/ff/v3 v3.4.0 // indirect
+	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4 // indirect
 	golang.org/x/mod v0.17.0 // indirect
+	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
-	golang.org/x/tools v0.21.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 )
