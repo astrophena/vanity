@@ -26,8 +26,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-
-	"github.com/yosssi/gohtml"
 )
 
 // doc2go options.
@@ -227,7 +225,7 @@ func build(dir, cacheDir, token string) error {
 	if err := tpl.ExecuteTemplate(&buf, "index", repos); err != nil {
 		return err
 	}
-	if err := os.WriteFile(filepath.Join(dir, "index.html"), gohtml.FormatBytes(buf.Bytes()), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "index.html"), buf.Bytes(), 0o644); err != nil {
 		return err
 	}
 
@@ -269,7 +267,7 @@ func build(dir, cacheDir, token string) error {
 			if err := os.MkdirAll(filepath.Dir(filepath.Join(dir, pkg.BasePath)), 0o755); err != nil {
 				return err
 			}
-			if err := os.WriteFile(filepath.Join(dir, pkg.BasePath+".html"), gohtml.FormatBytes(pkgbuf.Bytes()), 0o644); err != nil {
+			if err := os.WriteFile(filepath.Join(dir, pkg.BasePath+".html"), pkgbuf.Bytes(), 0o644); err != nil {
 				return err
 			}
 		}
@@ -277,7 +275,7 @@ func build(dir, cacheDir, token string) error {
 		if err := tpl.ExecuteTemplate(&buf, "import", repo); err != nil {
 			return err
 		}
-		if err := os.WriteFile(filepath.Join(dir, repo.Name+".html"), gohtml.FormatBytes(buf.Bytes()), 0o644); err != nil {
+		if err := os.WriteFile(filepath.Join(dir, repo.Name+".html"), buf.Bytes(), 0o644); err != nil {
 			return err
 		}
 	}
@@ -287,7 +285,7 @@ func build(dir, cacheDir, token string) error {
 	if err := tpl.ExecuteTemplate(&notFoundBuf, "404", nil); err != nil {
 		return err
 	}
-	if err := os.WriteFile(filepath.Join(dir, "404.html"), gohtml.FormatBytes(notFoundBuf.Bytes()), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "404.html"), notFoundBuf.Bytes(), 0o644); err != nil {
 		return err
 	}
 
